@@ -19,7 +19,7 @@ type Slot struct {
 type Board struct {
 	table   map[int]*Slot
 	turn    int
-	holding map[int]*Slot
+	holding map[int]int
 	dice1   int
 	dice2   int
 	game    bool
@@ -30,6 +30,9 @@ func (board Board) initiateBoard() Board {
 	board.turn = 0
 	board.game = true
 	board.table = make(map[int]*Slot)
+	board.holding = make(map[int]int)
+	board.holding[0] = -1
+	board.holding[1] = -1
 	board.table[0] = &Slot{2, 0}
 	board.table[1] = &Slot{0, -1}
 	board.table[2] = &Slot{0, -1}
@@ -64,9 +67,9 @@ func (board Board) render() {
 	} else {
 		fmt.Print("Black")
 	}
-	if board.dice1 != -1 && board.dice2 != -1 && board.uses == -1 {
+	if board.dice1 != -1 && board.dice2 != -1 && board.uses == 0 {
 		fmt.Println("\nThe dice rolled: " + strconv.Itoa(board.dice1) + " " + strconv.Itoa(board.dice2))
-	} else if board.uses != -1 {
+	} else if board.uses != 0 {
 		fmt.Println("\nThe dice rolled: " + strconv.Itoa(board.dice1) + " " + strconv.Itoa(board.dice2) + "! You have " + strconv.Itoa(board.uses) + " more uses!")
 	} else if board.dice1 == -1 {
 		fmt.Println("\nYou still have to play : " + strconv.Itoa(board.dice2))
@@ -106,14 +109,49 @@ func (board Board) render() {
 			}
 			white(" ")
 		}
+		white("")
 		fmt.Println()
 	}
 	// Middle
-	white("                          ")
+	for i := 0; i < 6; i++ {
+		white(" ")
+		if board.table[i].amount > 5 {
+			white(board.table[i].amount)
+		} else {
+			white(" ")
+		}
+	}
+	white(" ")
+	for i := 6; i < 12; i++ {
+		white(" ")
+		if board.table[i].amount > 5 {
+			white(board.table[i].amount)
+		} else {
+			white(" ")
+		}
+	}
+	white(" ")
 	fmt.Println()
 	blue("                          ")
 	fmt.Println()
-	white("                          ")
+	for i := 23; i > 17; i-- {
+		white(" ")
+		if board.table[i].amount > 5 {
+			white(board.table[i].amount)
+		} else {
+			white(" ")
+		}
+	}
+	white(" ")
+	for i := 17; i > 11; i-- {
+		white(" ")
+		if board.table[i].amount > 5 {
+			white(board.table[i].amount)
+		} else {
+			white(" ")
+		}
+	}
+	white(" ")
 	fmt.Println()
 	// Bottom Half
 	for i := 5; i > 0; i-- {
@@ -150,7 +188,7 @@ func (board Board) render() {
 }
 
 func (board Board) rollDice() Board {
-	board.uses = -1
+	board.uses = 0
 	board.dice1 = rand.Intn(5) + 1
 	board.dice2 = rand.Intn(5) + 1
 	if board.dice1 == board.dice2 {
@@ -260,8 +298,22 @@ func (board Board) move(character string, dice string) (Board, error) {
 			board.table[charint].color = -1
 		}
 
+		if board.table[charint+diceint].color == 1 {
+			board.holding[1]++
+		}
+
 		board.table[charint+diceint].amount++
 		board.table[charint+diceint].color = 0
+
+		if board.uses == 0 {
+			if diceint == board.dice1 {
+				board.dice1 = -1
+			} else {
+				board.dice2 = -1
+			}
+		} else {
+			board.uses--
+		}
 	} else {
 		funcerr = errors.New("A move there isn't possible!")
 		return board, funcerr

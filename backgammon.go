@@ -35,7 +35,7 @@ func main() {
 	}*/
 	board = board.rollDice()
 	board.render()
-	if board.uses == -1 {
+	if board.uses == 0 {
 		reader := bufio.NewReader(os.Stdin)
 		fmt.Println("move *character* *num*")
 		text, _ := reader.ReadString('\n')
