@@ -2,7 +2,6 @@ package main
 
 import (
 	"math/rand"
-	"strconv"
 	"strings"
 )
 
@@ -21,14 +20,9 @@ func (board Board) rollDice() Board {
 	return board
 }
 
-func (board Board) move(character string, dice string) (Board, string) {
+func (board Board) move(character string, diceint int) (Board, string) {
 	var funcerr string
 	character = strings.ToUpper(character)
-	diceint, err := strconv.Atoi(dice)
-	if err != nil {
-		funcerr = "You didn't give a number!"
-		return board, funcerr
-	}
 	if diceint != board.dice1 && diceint != board.dice2 {
 		funcerr = "You don't have such number!"
 	}
