@@ -119,6 +119,7 @@ func (board Board) move(character string, diceint int) (Board, string) {
 
 			if board.table[charint+diceint].color == 1 {
 				board.holding[1]++
+				board.table[charint+diceint].amount = 0
 			}
 
 			board.table[charint+diceint].amount++

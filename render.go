@@ -29,7 +29,7 @@ func (board Board) render() {
 	} else if board.adice2 == -1 {
 		fmt.Println("\nThe dice rolled: " + strconv.Itoa(board.dice1) + " " + strconv.Itoa(board.dice2) + "! You still have to play : " + strconv.Itoa(board.dice1))
 	}
-	ro := yellowB + blue + " A B C D E F  G H I J K L \n"
+	ro := yellowB + blue + " A B C D E F  G H I J K L " + reset + "\n"
 	// Top half
 	for i := 1; i < 6; i++ {
 		ro += cyanB + " "
