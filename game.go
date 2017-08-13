@@ -111,7 +111,10 @@ func (board Board) move(character string, diceint int) (Board, string) {
 	}
 
 	if board.turn == 0 {
-		if board.table[charint+diceint].color == board.turn || board.table[charint+diceint].color == -1 || board.table[charint+diceint].amount == 1 {
+		if charint+diceint > 23 {
+			funcerr = "A move there isn't possible!"
+			return board, funcerr
+		} else if board.table[charint+diceint].color == board.turn || board.table[charint+diceint].color == -1 || board.table[charint+diceint].amount == 1 {
 			board.table[charint].amount--
 			if board.table[charint].amount == 0 {
 				board.table[charint].color = -1
@@ -139,7 +142,10 @@ func (board Board) move(character string, diceint int) (Board, string) {
 			return board, funcerr
 		}
 	} else {
-		if board.table[charint-diceint].color == board.turn || board.table[charint-diceint].color == -1 || board.table[charint-diceint].amount == 1 {
+		if charint-diceint < 0 {
+			funcerr = "A move there isn't possible!"
+			return board, funcerr
+		} else if board.table[charint-diceint].color == board.turn || board.table[charint-diceint].color == -1 || board.table[charint-diceint].amount == 1 {
 			board.table[charint].amount--
 			if board.table[charint].amount == 0 {
 				board.table[charint].color = -1
@@ -168,5 +174,81 @@ func (board Board) move(character string, diceint int) (Board, string) {
 		}
 	}
 
+	return board, funcerr
+}
+
+func (board Board) checkIfSittingPossible() bool {
+	if board.turn == 0 {
+		if (board.table[board.dice1-1].color == board.turn || board.table[board.dice1-1].color == -1 || board.table[board.dice1-1].amount == 1) && board.adice1 != -1 {
+			return true
+		} else if (board.table[board.dice2-1].color == board.turn || board.table[board.dice2-1].color == -1 || board.table[board.dice2-1].amount == 1) && board.adice2 != -1 {
+			return true
+		} else {
+			return false
+		}
+	} else {
+		if (board.table[24-board.dice1].color == board.turn || board.table[24-board.dice1].color == -1 || board.table[24-board.dice1].amount == 1) && board.adice1 != -1 {
+			return true
+		} else if (board.table[24-board.dice2].color == board.turn || board.table[24-board.dice2].color == -1 || board.table[24-board.dice2].amount == 1) && board.adice2 != -1 {
+			return true
+		} else {
+			return false
+		}
+	}
+}
+
+func (board Board) place(diceint int) (Board, string) {
+	var funcerr string
+	if diceint != board.dice1 && diceint != board.dice2 {
+		funcerr = "You don't have such number!"
+		return board, funcerr
+	}
+	if board.turn == 0 {
+		if board.table[diceint-1].color == board.turn || board.table[diceint-1].color == -1 || board.table[diceint-1].amount == 1 {
+			board.holding[0]--
+			if board.table[diceint-1].color == 1 {
+				board.holding[1]++
+				board.table[diceint-1].amount = 0
+			}
+
+			board.table[diceint-1].amount++
+			board.table[diceint-1].color = 0
+
+			if board.uses == 0 {
+				if diceint == board.dice1 {
+					board.adice1 = -1
+				} else {
+					board.adice2 = -1
+				}
+			} else {
+				board.uses--
+			}
+			return board, funcerr
+		}
+		funcerr = "You cannot place your rock there!"
+		return board, funcerr
+	}
+	if board.table[24-diceint].color == board.turn || board.table[24-diceint].color == -1 || board.table[24-diceint].amount == 1 {
+		board.holding[1]--
+		if board.table[24-diceint].color == 0 {
+			board.holding[0]++
+			board.table[24-diceint].amount = 0
+		}
+
+		board.table[24-diceint].amount++
+		board.table[24-diceint].color = 1
+
+		if board.uses == 0 {
+			if diceint == board.dice1 {
+				board.adice1 = -1
+			} else {
+				board.adice2 = -1
+			}
+		} else {
+			board.uses--
+		}
+		return board, funcerr
+	}
+	funcerr = "You cannot place your rock there!"
 	return board, funcerr
 }

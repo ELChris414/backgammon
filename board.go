@@ -15,6 +15,7 @@ type Board struct {
 	table   map[int]*Slot
 	turn    int
 	holding map[int]int
+	total   map[int]int
 	dice1   int
 	adice1  int
 	dice2   int
@@ -29,8 +30,11 @@ func (board Board) initiateBoard() Board {
 	board.game = true
 	board.table = make(map[int]*Slot)
 	board.holding = make(map[int]int)
-	board.holding[0] = -1
-	board.holding[1] = -1
+	board.total = make(map[int]int)
+	board.total[0] = 15
+	board.total[1] = 15
+	board.holding[0] = 0
+	board.holding[1] = 0
 	board.table[0] = &Slot{2, 0}
 	board.table[1] = &Slot{0, -1}
 	board.table[2] = &Slot{0, -1}

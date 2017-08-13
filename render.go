@@ -128,5 +128,11 @@ func (board Board) render() {
 		ro += reset + "\n" + cyanB
 	}
 	ro += yellowB + blue + " M N O P Q R  S T U V W X " + reset + "\n"
+	if board.holding[0] > 0 {
+		ro += "Black is holding " + strconv.Itoa(board.holding[0]) + "\n"
+	}
+	if board.holding[1] > 0 {
+		ro += "White is holding " + strconv.Itoa(board.holding[1]) + "\n"
+	}
 	fmt.Println(ro)
 }
